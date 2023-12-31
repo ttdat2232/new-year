@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Year</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <style>
+        * {
+            background-color: #000;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mt-5 w-100 d-flex flex-column align-items-center">
+        <img id="firework"
+            src="https://bestanimations.com/media/fireworks/671801409ba-awesome-coloful-fireworks-animated-gif-image-3.gif"
+            style="width:50%;" alt="Cool Colorful Fireworks">
+        <h1 id="bless">Cùng đếm ngược chờ năm mới nào!</h1>
+        <h1 id="timer"></h1>
+        <div class="d-flex flex-row">
+            <textarea id="inputWish" class="mx-1 form-control""
+                placeholder=" Tranh thủ Ước gì cho năm sau đi nào. ❤️❤️❤️"></textarea>
+            <button id="wish" class="btn btn-primary">Ước (Enter)</button>
+            <button id="delete" class="mx-1 btn btn-danger">Ước lại</button>
+        </div>
+        <div class="my-5" id="your-wishes"></div>
+        <h3 id="my-bless">Cầu chúc cho các điều ước của bạn thành sự thật ❤️❤️❤️</h3>
+
+    </div>
+    <script type="text/javascript">
+        document.body.onkeydown = (e) => {
+            var enter = 13;
+            if (e.keycode == enter) {
+                displayWishes();
+            }
+        }
+        document.getElementById('delete').onclick = () => {
+            localStorage.clear();
+            displayWishes();
+        }
+        var destinateTime = new Date("Jan 1, 2024 00:00:00").getTime();
+        document.getElementById('firework').style.display = "none";
+        document.getElementById('my-bless').style.display = "none";
+        var x = setInterval(() => {
+            var now = calTime(7).getTime();
+            var distance = destinateTime - now;
+            if (distance <= 0) {
+                clearInterval(x);
+                document.getElementById('firework').style.display = "block";
+                document.getElementById('my-bless').style.display = "block";
+                document.getElementById("timer").innerHTML = "00:00:00";
+                document.getElementById("bless").innerHTML = "Chúc Mừng Năm Mới!";
+            } else {
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                var hourStr = hours < 10 ? '0' + hours : hours + "";
+                var minuteStr = minutes < 10 ? '0' + minutes : minutes + "";
+                var secondStr = seconds < 10 ? '0' + seconds : seconds + "";
+                document.getElementById("timer").innerHTML = `${hourStr}:${minuteStr}:${secondStr}`
+            }
+        }, 1000);
+        function calTime(offset) {
+            var d = new Date();
+            var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+            return new Date(utc + (3600000 * offset));
+        }
+        var btn = document.getElementById('wish');
+        document.getElementById('inputWish').onkeydown = function (e) {
+            if (e.key == 'Enter')
+                displayWishes();
+        }
+        btn.addEventListener('click', displayWishes);
+        function displayWishes() {
+            var wishes = Array.from(JSON.parse(localStorage.getItem('wishes')) ?? '');
+            if (document.getElementById('inputWish').value)
+                wishes.push(document.getElementById('inputWish').value);
+            document.getElementById('inputWish').value = "";
+            document.getElementById('your-wishes').innerHTML = `<h1>Các điều ước của bạn:<h1/>`;
+            var count = 0;
+            wishes.forEach(e => {
+                document.getElementById('your-wishes').innerHTML = document.getElementById('your-wishes').innerHTML.concat(`<h3 style="color: #80ff6a;">${++count}. ${e}<h3/>`);
+            });
+            localStorage.setItem('wishes', JSON.stringify(wishes));
+        }
+        displayWishes();
+
+    </script>
+</body>
+
+</html>
